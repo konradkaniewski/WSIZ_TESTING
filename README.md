@@ -21,7 +21,7 @@ Test utworzone w:
 
 ```
 * Import kolekcji [import collections]:opcja Import - > Upload Files - > wybrać plik OpenWeatherMap.postman_collection.json 
-* Import zmiennych środowiska [manage environments]:klikknij ikonę ustawień Manage Environments - > Import - > wybrać plik OpenWeatherMap.postman_environment.json
+* Import zmiennych środowiskowych [manage environments]:klikknij ikonę ustawień Manage Environments - > Import - > wybrać plik OpenWeatherMap.postman_environment.json
 ```
 
 ## Tabela z opisem testów 
