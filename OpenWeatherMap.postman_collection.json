@@ -1,0 +1,371 @@
+{
+	"info": {
+		"_postman_id": "9ce2cbeb-0042-48f7-b76f-05331c7c8498",
+		"name": "OpenWeatherMap",
+		"description": "Testy usług dla aplikacji OPENWHEATHEMAP",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET_STATTION_BY_CITY",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e90d3ef5-79e1-43b8-9e7c-eaf6c2df97c3",
+						"exec": [
+							"/* odpowiedź w formie JSON*/",
+							"const response_data = pm.response.json();",
+							"",
+							"/*Sprawdzenie statusu odpowiedzi*/",
+							"pm.test(\"Kod odpowiedzi HTTP: 200 ver.1\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"tests[\"Kod odpowiedzi HTTP: 200 ver.2\"] = responseCode.code === 200;",
+							"",
+							"/*Czas odpowiedzi*/",
+							"pm.test(\"Czas odpowiedzi mniejszy niz: \" + pm.environment.get(\"response_time\") + \"ms ver.1\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"response_time\")));",
+							"});",
+							"tests[\"Czas odpowiedzi mniejszy niz: \" + pm.environment.get(\"response_time\") + \"ms ver.2\"] = responseTime <  pm.environment.get(\"response_time\");",
+							"",
+							"/*Sprawdzenie formatu odpowiedzi*/",
+							"pm.test(\"Sprawdzenie formatu odpowiedzi [ok]\", function () {",
+							"     pm.response.to.be.ok;",
+							"     pm.response.to.be.withBody;",
+							"     pm.response.to.be.json;",
+							"});",
+							"",
+							"/*Sprawdzenie formatu odpowiedzi - błędy*/",
+							"pm.test(\"Sprawdzenie formatu odpowiedzi [error]\", function () {",
+							"    pm.response.to.not.be.error;",
+							"    pm.expect(response_data.message).to.be.undefined;",
+							"    pm.expect(response_data.code).to.be.undefined;",
+							"});",
+							"",
+							"/*Sprawdzenie typu danych*/",
+							"pm.test(\"Sprawdzenie typu danych\", () => {",
+							"  pm.expect(response_data).to.be.an(\"object\");",
+							"  pm.expect(response_data.base).to.be.a(\"string\");",
+							"  pm.expect(response_data.timezone).to.be.a(\"number\");",
+							"  pm.expect(response_data.weather).to.be.an(\"array\");",
+							"  pm.expect(response_data.main.temp).to.be.a(\"number\");",
+							"});",
+							"",
+							"/*Sprawdzenie danych odpowiedzi usługi*/",
+							"pm.test(\"Sprawdzenie danych usługi\", () => {",
+							"  pm.expect(response_data.name).to.eql(pm.collectionVariables.get(\"city_name\"));",
+							"  pm.expect(response_data.sys.country).to.eql(\"PL\");",
+							"  pm.expect(response_data.base).to.eql(\"stations\");",
+							"  pm.expect(response_data.wind.speed).to.be.above(0);",
+							"});",
+							"",
+							"/*Sprawdzenie nagłówka odpowiedzi*/",
+							"tests[\"Content-Type\"] = postman.getResponseHeader(\"Content-Type\");",
+							"tests[\"Content-Length\"] = postman.getResponseHeader(\"Content-Length\");",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": "Typ danych",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{uri}}{{resource_weather_data}}/?q={{city_name}}&appid={{appid}}",
+					"host": [
+						"{{uri}}{{resource_weather_data}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "{{city_name}}"
+						},
+						{
+							"key": "appid",
+							"value": "{{appid}}"
+						}
+					]
+				},
+				"description": "Sprawdzenie pogody wg miejscowości"
+			},
+			"response": []
+		},
+		{
+			"name": "GET_STATION_BY_ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{uri}}{{resource_weather_data}}/?id=3065626&appid={{appid}}",
+					"host": [
+						"{{uri}}{{resource_weather_data}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "3065626"
+						},
+						{
+							"key": "appid",
+							"value": "{{appid}}"
+						}
+					]
+				},
+				"description": "Pobranie danych o pogodzie wg id miejscowości"
+			},
+			"response": []
+		},
+		{
+			"name": "GET_STATION_LIST",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "96223487-b6c6-426c-acbc-13afc1f6a523",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{uri}}{{resource_stations}}?appid={{appid}}",
+					"host": [
+						"{{uri}}{{resource_stations}}"
+					],
+					"query": [
+						{
+							"key": "appid",
+							"value": "{{appid}}"
+						}
+					]
+				},
+				"description": "Pobranie listy dostępnych stacji pogodowych"
+			},
+			"response": []
+		},
+		{
+			"name": "ADD_STATION",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"description": "Typ danych",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"external_id\": \"TestStation\",\r\n    \"name\": \"TestCity\",\r\n    \"latitude\": 5,\r\n    \"longitude\": 20,\r\n    \"altitude\": 10\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{uri}}{{resource_stations}}?appid={{appid}}",
+					"host": [
+						"{{uri}}{{resource_stations}}"
+					],
+					"query": [
+						{
+							"key": "appid",
+							"value": "{{appid}}"
+						}
+					]
+				},
+				"description": "Dodanie nowej stacji"
+			},
+			"response": []
+		},
+		{
+			"name": "CHANGE_STATTION",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "8db66dd2-275c-4fa1-8a8e-b300a4f61c7b",
+						"exec": [
+							"/*Pobranie id ostatniej stacji*/\r",
+							"pm.sendRequest({\r",
+							"      url:  pm.environment.get(\"uri\") + pm.environment.get(\"resource_stations\") + \"?appid=\" + pm.environment.get(\"appid\"), \r",
+							"      method: 'GET'\r",
+							"  }, function (err, res) {\r",
+							"        const response_data = res.json();\r",
+							"        pm.environment.set(\"id_last_station\", response_data[response_data.length-1].id);\r",
+							"  });"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"external_id\": \"OpenWeatherMap-TestStation\",\r\n    \"name\": \"TestCity\",\r\n    \"latitude\": 5,\r\n    \"longitude\": 20,\r\n    \"altitude\": 10\r\n}"
+				},
+				"url": {
+					"raw": "{{uri}}{{resource_stations}}/{{id_last_station}}?appid={{appid}}",
+					"host": [
+						"{{uri}}{{resource_stations}}"
+					],
+					"path": [
+						"{{id_last_station}}"
+					],
+					"query": [
+						{
+							"key": "appid",
+							"value": "{{appid}}"
+						}
+					]
+				},
+				"description": "Modyfikacja danych stacji pogodowej"
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE_STATION",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "9c79b735-1d8a-43ec-bf03-1087ae53aafc",
+						"exec": [
+							"/*Pobranie id ostatniej stacji*/",
+							"pm.sendRequest({",
+							"      url:  pm.environment.get(\"uri\") + pm.environment.get(\"resource_stations\") + \"?appid=\" + pm.environment.get(\"appid\"), ",
+							"      method: 'GET'",
+							"  }, function (err, res) {",
+							"        const response_data = res.json();",
+							"        // console.log(response_data);",
+							"        // console.log(response_data[response_data.length-1]);",
+							"        pm.environment.set(\"id_last_station\", response_data[response_data.length-1].id);",
+							"  });"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "4399fd08-eb51-43e7-b71b-7d002ec92558",
+						"exec": [
+							"/*Sprawdzenie statusu odpowiedzi*/\r",
+							"tests[\"Kod odpowiedzi HTTP: 200 ver.2\"] = responseCode.code === 204;\r",
+							"\r",
+							"/*Czas odpowiedzi*/\r",
+							"tests[\"Czas odpowiedzi mniejszy niz: \" + pm.environment.get(\"response_time\") + \"ms ver.2\"] = responseTime <  pm.environment.get(\"response_time\");\r",
+							"\r",
+							"/*Sprawdzenie nagłówka odpowiedzi*/\r",
+							"tests[\"Access-Control-Allow-Credentials\"] = postman.getResponseHeader(\"Access-Control-Allow-Credentials\");\r",
+							"tests[\"Access-Control-Allow-Methods\"] = postman.getResponseHeader(\"Access-Control-Allow-Methods\");\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{uri}}{{resource_stations}}/{{id_last_station}}?appid={{appid}}",
+					"host": [
+						"{{uri}}{{resource_stations}}"
+					],
+					"path": [
+						"{{id_last_station}}"
+					],
+					"query": [
+						{
+							"key": "appid",
+							"value": "{{appid}}"
+						}
+					]
+				},
+				"description": "Usunięcie stacji pogodowej"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "14179803-a528-466f-89e5-b2f2d507b926",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "2135658e-8025-406d-b134-c194044eafa4",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "0a50b81f-201a-4225-8058-ea874364b0de",
+			"key": "city_name",
+			"value": ""
+		}
+	],
+	"protocolProfileBehavior": {}
+}
